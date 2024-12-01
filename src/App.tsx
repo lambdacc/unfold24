@@ -8,12 +8,13 @@ import {
 import { ExplorePage } from "./pages/Explore";
 import { CreateRiskPage } from "./pages/CreateRisk";
 import EventsPage from "./pages/Events";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/explore" replace />} />
+        <Route path="/" element={<Home />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/events/:id" element={<EventsPage />} />
         <Route path="/createRisk" element={<CreateRiskPage />} />
