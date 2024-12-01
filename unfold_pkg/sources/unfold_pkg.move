@@ -29,6 +29,7 @@ module unfold_pkg::contract {
         collateral: Coin<SUI>,
         ctx: &mut TxContext
     ) {
+        //let seller = tx_context::sender(ctx);
         let state = State {
             id: object::new(ctx),
             seller,
@@ -74,18 +75,18 @@ module unfold_pkg::contract {
     /// function to settle after the risk expire
     public fun settle(state: &mut State, toggle: bool, ctx: &mut TxContext) {}
 
-    public fun payoffToSeller(state: &mut State, toggle: bool, ctx: &mut TxContext) {
+    public fun settleContract(state: &mut State, riskEventOccurred: bool, ctx: &mut TxContext) {
         // If toggle is true, return the collateral and balance to the seller
+        // Otherwise send share of collateral and buyer balance to buyers, return any balance collater to the seller
         let mut amount = state.collateral.value();
         let mut coin_to_transfer = state.collateral.split(amount, ctx);
-        // Transfer collateral and buyer's balance to the
-        amount = state.buyers_balance.value();
-        // Transfer buyers' balance to the seller
-        let balance_to_transfer = state.buyers_balance.split(amount);
-        coin_to_transfer.join(coin::from_balance(balance_to_transfer, ctx));
-        if (toggle) {
+        if (riskEventOccurred) { //Risk seller gets compensated
+            amount = state.buyers_balance.value();
+            // Transfer buyers' balance to the seller
+            let balance_to_transfer = state.buyers_balance.split(amount);
+            coin_to_transfer.join(coin::from_balance(balance_to_transfer, ctx));
             transfer::public_transfer(coin_to_transfer, state.seller);
-        } else {
+        } else { //Risk buyers get payouts
             //transfer::public_transfer(coin_to_transfer, state.seller);
             // If risk event did not occur, distribute collateral and balance among the buyers
             let total_buyers = table::length(&state.buyers);
@@ -109,13 +110,11 @@ module unfold_pkg::contract {
                 // Transfer corresponding collateral to the buyer (or distribute accordingly)
                 transfer::public_transfer(buyer_balance_to_transfer, buyer);
             };
-            if (given_shares != state.total_shares) {
                 transfer::public_transfer(coin_to_transfer, state.seller);
-            } else {
-                coin::destroy_zero(coin_to_transfer);
-            }
         };
     }
+
+
 
     //TODO func to fetch state by ID
 }
