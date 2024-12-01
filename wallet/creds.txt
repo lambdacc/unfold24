@@ -2,8 +2,6 @@ seller wallet
     seed: carpet soccer theme inhale better pigeon robust swarm blast crime twenty guitar
     password: unfold#24(20
 
-
-
 buyer wallet 1
     seed: key legend bird liar dynamic tonight meat manage family solution riot custom
     password: unfold#24(20

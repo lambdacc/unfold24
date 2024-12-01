@@ -1,0 +1,20 @@
+
+
+Script>
+
+	: UID
+	seller : add
+	collateral : sui
+	total_token: 10
+	token_val: collateral/10
+	buyer_collateral : <[address]>
+
+
+	::createInstance
+
+	::getBalanceShares
+
+	::buyShare
+
+	::settleInstance
+
