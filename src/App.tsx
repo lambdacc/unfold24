@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { ExplorePage } from "./pages/Explore";
 import { CreateRiskPage } from "./pages/CreateRisk";
+import EventsPage from "./pages/Events";
 
 function App() {
   return (
@@ -14,10 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/explore" replace />} />
         <Route path="/explore" element={<ExplorePage />} />
-        <Route
-          path="/events/:id"
-          element={<div>Event Details Page (TODO)</div>}
-        />
+        <Route path="/events/:id" element={<EventsPage />} />
         <Route path="/createRisk" element={<CreateRiskPage />} />
       </Routes>
     </Router>
