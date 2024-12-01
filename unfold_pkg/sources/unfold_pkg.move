@@ -23,13 +23,12 @@ module unfold_pkg::contract {
     }
 
     public fun new_risk(
-        seller: address,
         risk_coverage: u64,
         countShares: u64,
         collateral: Coin<SUI>,
         ctx: &mut TxContext
     ) {
-        //let seller = tx_context::sender(ctx);
+        let seller = tx_context::sender(ctx);
         let state = State {
             id: object::new(ctx),
             seller,
