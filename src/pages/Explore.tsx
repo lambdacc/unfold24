@@ -102,7 +102,7 @@ export const ExplorePage = () => {
               />
             </div>
             <Link to="/createRisk">
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button className="bg-pink-600 hover:bg-pink-700">
                 CREATE RISK
               </Button>
             </Link>
@@ -153,7 +153,7 @@ export const ExplorePage = () => {
                         </p>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
-                            className="bg-blue-600 h-2 rounded-full"
+                            className="bg-pink-600 h-2 rounded-full"
                             style={{ width: `${event.mintedPercentage}%` }}
                           ></div>
                         </div>

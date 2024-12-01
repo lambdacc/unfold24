@@ -129,7 +129,7 @@ const EventsPage = () => {
                       </p>
                     </div>
 
-                    <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
+                    <Button className="w-full bg-pink-500 hover:bg-pink-600 text-white">
                       BUY
                     </Button>
                   </CardContent>

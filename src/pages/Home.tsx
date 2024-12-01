@@ -1,8 +1,18 @@
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import { Github, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 export default function Home() {
+  const navigate = useNavigate();
+  const handleLaunchClick = () => {
+    navigate("/explore");
+  };
   const features = [
     {
       title: "Decentralized Governance",
@@ -68,7 +78,10 @@ export default function Home() {
                 Social
               </a>
             </nav>
-            <Button className="bg-pink-600 hover:bg-pink-700 text-white shadow-lg shadow-pink-500/50 ml-6 transition-all duration-300 ease-in-out hover:scale-105">
+            <Button
+              onClick={handleLaunchClick}
+              className="bg-pink-600 hover:bg-pink-700 text-white shadow-lg shadow-pink-500/50 ml-6 transition-all duration-300 ease-in-out hover:scale-105"
+            >
               Launch App
             </Button>
           </div>
@@ -88,7 +101,10 @@ export default function Home() {
             the StarkNet Network, aiming to be the future of decentralized
             innovation.
           </p>
-          <Button className="bg-pink-600 hover:bg-pink-700 text-white text-lg px-8 py-6 shadow-lg shadow-pink-500/50 transition-all duration-300 ease-in-out hover:scale-105">
+          <Button
+            onClick={handleLaunchClick}
+            className="bg-pink-600 hover:bg-pink-700 text-white text-lg px-8 py-6 shadow-lg shadow-pink-500/50 transition-all duration-300 ease-in-out hover:scale-105"
+          >
             Launch App
           </Button>
         </div>

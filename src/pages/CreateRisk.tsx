@@ -167,7 +167,7 @@ export const CreateRiskPage = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-pink-600 hover:bg-pink-700 text-white"
             >
               Deposit
             </Button>
