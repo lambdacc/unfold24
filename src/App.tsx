@@ -6,6 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { ExplorePage } from "./pages/Explore";
+import { CreateRiskPage } from "./pages/CreateRisk";
 
 function App() {
   return (
@@ -17,10 +18,7 @@ function App() {
           path="/events/:id"
           element={<div>Event Details Page (TODO)</div>}
         />
-        <Route
-          path="/createRisk"
-          element={<div>Create Risk Page (TODO)</div>}
-        />
+        <Route path="/createRisk" element={<CreateRiskPage />} />
       </Routes>
     </Router>
   );
