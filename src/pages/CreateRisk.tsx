@@ -5,6 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+  useSuiClient,
+  useSuiClientQuery,
+} from "@mysten/dapp-kit";
+import { useNetworkVariable } from "../networkConfig";
 
 interface RiskFormData {
   title: string;
@@ -15,6 +23,65 @@ interface RiskFormData {
 }
 
 export const CreateRiskPage = () => {
+  const suiClient = useSuiClient();
+  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const [waitingForTxn, setWaitingForTxn] = useState("");
+  const currentAccount = useCurrentAccount();
+  const counterPackageId = useNetworkVariable("counterPackageId");
+
+
+  const riskCreate = async (riskCoverage, collateralAmount) => {
+    // const riskCoverage: number = 1000;
+    const totalShares = Math.ceil(riskCoverage / 100);
+    // const collateralAmount = 1000000;
+
+    console.log("new_risk fun called call");
+
+    const tx = new Transaction();
+
+    console.log("new_risk tx", tx);
+
+    try {
+      //const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(collateralAmount)]);
+      const coin = coinWithBalance({ balance: collateralAmount });
+      console.log("new_risk coin", coin);
+
+      // tx.setGasBudget(500000000);
+      tx.moveCall({
+        target:
+          `${counterPackageId}::contract::new_risk`,
+        arguments: [
+          tx.pure.u64(riskCoverage),
+          tx.pure.u64(totalShares),
+          tx.object(coin),
+        ],
+      });
+
+      tx.setSender(currentAccount?.address);
+      signAndExecute(
+        {
+          transaction: tx,
+        },
+        {
+          onSuccess: (tx) => {
+            suiClient
+              .waitForTransaction({ digest: tx.digest })
+              .then(async () => {
+                //await refetch();
+                setWaitingForTxn("");
+                console.log(`Transaction successful: ${tx.digest}`);
+              });
+          },
+          onError: (error) => {
+            console.error("Transaction failed:", error);
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error during transaction setup or execution:", error);
+    }
+  };
+
   const [formData, setFormData] = useState<RiskFormData>({
     title: "",
     description: "",
@@ -46,6 +113,7 @@ export const CreateRiskPage = () => {
   // Handle form submission
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    riskCreate(formData.coverageAmount, formData.collateralAmount);
     console.log("Form submitted with data:", formData);
     // Add your form submission logic here
   };

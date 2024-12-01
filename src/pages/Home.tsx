@@ -32,7 +32,7 @@ export default function Home() {
     {
       title: "Reward Distribution",
       description:
-        "Profit from tokens received will be delivered to users from Dolven's Airdrops interface.",
+        "Profit from tokens received will be delivered to users from RH's Airdrops interface.",
     },
   ];
 
@@ -50,7 +50,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center">
             <a href="/" className="text-2xl font-bold text-gray-900 mr-6">
-              DOLVEN <span className="text-pink-700">LABS</span>
+              Risk <span className="text-pink-700">Harbor</span>
             </a>
             <nav className="flex items-center space-x-6">
               <a
@@ -97,7 +97,7 @@ export default function Home() {
             Catalyst for Starknet
           </h1>
           <p className="text-xl text-gray-800 mb-12 max-w-3xl mx-auto">
-            Dolven Labs is a DAO Based Ecosystem Catalyst for projects built on
+            Risk Harbor is a DAO Based Ecosystem Catalyst for projects built on
             the StarkNet Network, aiming to be the future of decentralized
             innovation.
           </p>
@@ -114,7 +114,7 @@ export default function Home() {
       <section className="relative z-10 py-24">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-gray-900 text-center mb-16">
-            Features of Dolven Labs
+            Features of Risk Harbor
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {features.map((feature, index) => (
@@ -136,7 +136,7 @@ export default function Home() {
       <section className="relative z-10 py-24 text-center">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
-            Stay updated on the latest Dolven Labs
+            Stay updated on the latest Risk Harbor
           </h2>
           <div className="flex justify-center gap-8">
             <a
