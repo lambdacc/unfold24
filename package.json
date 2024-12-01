@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mysten/dapp-kit": "0.14.39",
+    "@mysten/dapp-kit": "0.14.39",
     "@mysten/sui": "1.16.0",
     "@radix-ui/colors": "^3.0.0",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
@@ -45,3 +46,4 @@
     "vite": "^5.3.3"
   }
 }
+
