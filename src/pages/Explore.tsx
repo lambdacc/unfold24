@@ -1,10 +1,10 @@
-// src/pages/Explore.tsx
 import { Link } from "react-router-dom";
 import { Header } from "../components/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { getStoredObjectIds } from "@/lib/utils";
 
 const url =
   "https://imgs.search.brave.com/PPq4hTZounTgWRcgyQLvKpvchf0BdaJ3K0tZ6Dy7ofI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5jbm4uY29tL2Fw/aS92MS9pbWFnZXMv/c3RlbGxhci9wcm9k/L2MtMjAxOS0wMy0y/NnQxNzU4NDB6LTE2/NzUxMjc4MzAtcmMx/YmEwZWU3N2IwLXJ0/cm1hZHAtMy11c2Et/dHJ1bXAtY29uZ3Jl/c3MuanBnP2M9MXgx/JnE9aF8yNTYsd18y/NTYsY19maWxs";
@@ -58,31 +58,27 @@ const recentActivities: Activity[] = [
   },
 ];
 
-const dummyEvents: RiskEvent[] = [
-  {
-    id: "1",
-    title: "Crypto Market Volatility Risk",
-    date: "2024-12-15",
-    availableShares: 750,
-    totalShares: 1000,
-    mintedPercentage: 25,
-    profileImage: `${url}`,
-  },
-  {
-    id: "2",
-    title: "DeFi Protocol Insurance",
-    date: "2024-12-20",
-    availableShares: 500,
-    totalShares: 1000,
-    mintedPercentage: 50,
-    profileImage: `${url}`,
-  },
-  // Add more dummy events here
-];
-
 export const ExplorePage = () => {
   const [displayCount, setDisplayCount] = useState(6);
   const [searchQuery, setSearchQuery] = useState("");
+  const [events, setEvents] = useState<RiskEvent[]>([]);
+
+  useEffect(() => {
+    // Get stored objectIds and create events array
+    const storedIds = getStoredObjectIds();
+    console.log(storedIds);
+    
+    const generatedEvents = storedIds.map((id) => ({
+      id: id,
+      title: "Crypto Market Volatility Risk",
+      date: "2024-12-15",
+      availableShares: 750,
+      totalShares: 1000,
+      mintedPercentage: 75,
+      profileImage: url,
+    }));
+    setEvents(generatedEvents);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -129,7 +125,7 @@ export const ExplorePage = () => {
             {/* Risk Cards Grid */}
             <div className="lg:col-span-3">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {dummyEvents.slice(0, displayCount).map((event) => (
+                {events.slice(0, displayCount).map((event) => (
                   <Link key={event.id} to={`/events/${event.id}`}>
                     <Card className="p-6 hover:shadow-lg transition-shadow">
                       <div className="flex items-center space-x-4 mb-4">
@@ -166,7 +162,7 @@ export const ExplorePage = () => {
                 ))}
               </div>
 
-              {displayCount < dummyEvents.length && (
+              {displayCount < events.length && (
                 <div className="mt-8 text-center">
                   <Button
                     variant="outline"
