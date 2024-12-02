@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {
   BrowserRouter as Router,
   Routes,

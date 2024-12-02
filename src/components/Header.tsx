@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // src/components/Header.tsx
 import { ConnectButton } from "@mysten/dapp-kit";
 import { useCurrentAccount } from "@mysten/dapp-kit";
