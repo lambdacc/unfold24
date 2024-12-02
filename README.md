@@ -64,6 +64,14 @@ Any unsubscribed shares' portion of the collateral returns to the Risk Seller
 
 ---------------------------------
 
+### Specific Bugs and Hurdles
+- **Object ID Not Populating in API Response:** After creating an object, the object ID was not appearing in the API response. By referring to examples provided by the SUI team, we updated the options passed in the transaction object, which resolved the issue.
+
+
+- **Code for Iterating Through a Table:** Iterating through a table in place created compilation errors. We reached out to expert advisors from the SUI team, who helped us refactor the code to resolve the issue.
+
+
+- **Typo in tha package name for Move Function Call:** We encountered a difficult-to-notice typo in the package used for the Move function call from TypeScript. Debugging this took longer than expected, eventually got over the hurdle with more Coffee!!
 ---------------------------------
 
 

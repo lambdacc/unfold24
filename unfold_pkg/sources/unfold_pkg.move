@@ -27,7 +27,7 @@ module unfold_pkg::contract {
         buyers_balance: Balance<SUI>,
         buyers: Table<address, u64>,
         buyers_iter: vector<address>
-    }
+    } // In practice there might be an expiry date added for further asserting when settlement should occur
 
     public fun new_risk(
         name: String,
