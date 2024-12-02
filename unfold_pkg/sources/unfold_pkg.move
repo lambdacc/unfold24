@@ -76,14 +76,14 @@ module unfold_pkg::contract {
         // If risk event has occured, transfer the collateral and balance to the seller
         // Otherwise send share of collateral and buyer balance to buyers, return any balance collater to the seller
         if (riskEventOccurred) {
-            payToSeller(state, ctx)
+            pay_to_seller(state, ctx)
         } else {
-            payToBuyers(state, ctx)
+            pay_to_buyers(state, ctx)
         };
     }
 
 
-    fun payToSeller(state: &mut State, ctx: &mut TxContext) {
+    fun pay_to_seller(state: &mut State, ctx: &mut TxContext) {
         let mut amount = state.collateral.value();
         let mut coin_to_transfer = state.collateral.split(amount, ctx);
         //Risk seller gets compensated
@@ -95,7 +95,7 @@ module unfold_pkg::contract {
     }
 
 
-    fun payToBuyers(state: &mut State, ctx: &mut TxContext) {
+    fun pay_to_buyers(state: &mut State, ctx: &mut TxContext) {
         // If toggle is true, return the collateral and balance to the seller
         // Otherwise send share of collateral and buyer balance to buyers, return any balance collater to the seller
         let mut amount = state.collateral.value();
@@ -129,7 +129,30 @@ module unfold_pkg::contract {
     }
 
 
-    //TODO func to fetch state by ID
+    //Get state details by ID
+    public struct StateDetails has drop {
+        id: ID,
+        seller: address,
+        risk_coverage: u64,
+        total_shares: u64,
+        rem_shares: u64,
+        collateral_amount: u64,
+        buyers_count: u64,
+        buyers_iter: vector<address>
+    }
+
+    public fun get_state_details(state: &State): StateDetails {
+        StateDetails {
+            id: object::id(state),
+            seller: state.seller,
+            risk_coverage: state.risk_coverage,
+            total_shares: state.total_shares,
+            rem_shares: state.rem_shares,
+            collateral_amount: coin::value(&state.collateral),
+            buyers_count: table::length(&state.buyers),
+            buyers_iter: state.buyers_iter
+        }
+    }
 }
 
 
