@@ -1,4 +1,3 @@
-// src/pages/CreateRisk.tsx
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../components/Header";
@@ -6,6 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { CalendarIcon, Clock } from "lucide-react";
+import { format } from "date-fns";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
 import {
   useCurrentAccount,
@@ -22,6 +30,8 @@ interface RiskFormData {
   coverageAmount: string;
   collateralAmount: string;
   profileImage: File | "";
+  eventEndDate: Date | undefined;
+  eventEndTime: string;
 }
 
 export const CreateRiskPage = () => {
@@ -48,6 +58,8 @@ export const CreateRiskPage = () => {
     ipfshash,
     riskCoverage,
     collateralAmount,
+    endDate,
+    endTime,
   ) => {
     const totalShares = Math.ceil(riskCoverage / 100);
     console.log("new_risk fun called call");
@@ -85,7 +97,6 @@ export const CreateRiskPage = () => {
                 console.log(`Transaction successful: ${tx.digest}`);
                 console.log("object changes", tx.objectChanges);
                 storeObjectChanges(tx?.objectChanges[1]?.objectId);
-                // Redirect to /explore after successful transaction
                 navigate("/explore");
               });
           },
@@ -105,6 +116,8 @@ export const CreateRiskPage = () => {
     coverageAmount: "",
     collateralAmount: "",
     profileImage: "",
+    eventEndDate: undefined,
+    eventEndTime: "",
   });
 
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -126,8 +139,16 @@ export const CreateRiskPage = () => {
   };
 
   function suiToMist(sui: number): number {
-    return sui * 1_000_000_000; // 1 SUI = 1,000,000,000 Mist
+    return sui * 1_000_000_000;
   }
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setFormData((prev) => ({ ...prev, eventEndDate: date }));
+  };
+
+  const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, eventEndTime: e.target.value }));
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -137,6 +158,8 @@ export const CreateRiskPage = () => {
       formData.profileImage,
       formData.coverageAmount,
       formData.collateralAmount,
+      formData.eventEndDate,
+      formData.eventEndTime,
     );
     console.log("Form submitted with data:", formData);
   };
@@ -147,7 +170,7 @@ export const CreateRiskPage = () => {
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Create Risk</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">Create Risk Event</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Profile Image Upload */}
@@ -215,6 +238,55 @@ export const CreateRiskPage = () => {
                 className="mt-1"
                 rows={4}
               />
+            </div>
+
+            {/* Event End Date and Time */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Event End Date
+              </label>
+              <div className="flex space-x-4">
+                <div className="flex-1">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.eventEndDate && "text-muted-foreground",
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.eventEndDate ? (
+                          format(formData.eventEndDate, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={formData.eventEndDate}
+                        onSelect={handleDateSelect}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="flex-1">
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      type="time"
+                      name="eventEndTime"
+                      value={formData.eventEndTime}
+                      onChange={handleTimeChange}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Coverage Amount */}

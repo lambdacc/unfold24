@@ -15,24 +15,24 @@ export default function Home() {
   };
   const features = [
     {
-      title: "Decentralized Governance",
+      title: "Transparency",
       description:
-        "Participate in decision-making processes through our DAO structure.",
+        "Blockchain-based records create immutable, auditable risk-sharing transactions.",
     },
     {
-      title: "StarkNet Integration",
+      title: "No Counterparty Risk",
       description:
-        "Leverage the power of StarkNet for scalable and efficient operations.",
+        "Collateral locked in smart contract eliminates default risk for all participants",
     },
     {
-      title: "Community-Driven Innovation",
+      title: "Scalability",
       description:
-        "Shape the future of decentralized applications with community input.",
+        "Supports diverse use cases, from agriculture to supply chain, with flexibility for users to customize solutions across industries",
     },
     {
-      title: "Reward Distribution",
+      title: "Permissionless",
       description:
-        "Profit from tokens received will be delivered to users from RH's Airdrops interface.",
+        "Open to all participants, with collateral set by the seller and market-driven parameters, ensuring decentralized and attractive offerings.",
     },
   ];
 

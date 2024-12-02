@@ -140,8 +140,7 @@ export const ExplorePage = () => {
               ? ((totalShares - availableShares) / totalShares) * 100
               : 0,
           // profileImage: `https://ipfs.io/ipfs/${suiObject.ipfs_hash}`,
-          profileImage: `https://imgs.search.brave.com/ah-41A0LDgHkYGnNEoEDN5DE07ufMbjeNPaAokX6NKE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi9iL2I2L0lt/YWdlX2NyZWF0ZWRf/d2l0aF9hX21vYmls/ZV9waG9uZS5wbmcv/NjQwcHgtSW1hZ2Vf/Y3JlYXRlZF93aXRo/X2FfbW9iaWxlX3Bo/b25lLnBuZw`,
-
+          profileImage: `https://blogs.microsoft.com/wp-content/uploads/prod/sites/5/2024/01/African-Landscape-at-Sunset-HERO-Image.jpg`,
           createdAt: new Date(suiObject.created_at || Date.now()), // Parse creation date from suiObject or use current time as fallback
         };
       });
@@ -186,7 +185,7 @@ export const ExplorePage = () => {
             </div>
             <Link to="/createRisk">
               <Button className="bg-pink-600 hover:bg-pink-700">
-                CREATE RISK
+                CREATE RISK EVENT
               </Button>
             </Link>
           </div>

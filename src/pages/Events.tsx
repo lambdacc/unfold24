@@ -15,15 +15,14 @@ import {
 import { storeObjectChanges } from "@/lib/utils";
 
 export const EventsPage: React.FC = () => {
-  const [shareCount, setShareCount] = useState(3);
+  const [shareCount, setShareCount] = useState(5);
   const navigate = useNavigate();
   const handleExplore = () => {
     navigate("/explore");
   };
 
   const imageUrl =
-    "https://imgs.search.brave.com/IzHtSVyIKjNLnMlKCnLZobLZNaBph_0zBwPWk-jhA-s/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy90/aHVtYi81LzU2L0Rv/bmFsZF9UcnVtcF9v/ZmZpY2lhbF9wb3J0/cmFpdC5qcGcvNTEy/cHgtRG9uYWxkX1Ry/dW1wX29mZmljaWFs/X3BvcnRyYWl0Lmpw/Zw";
-
+    "https://blogs.microsoft.com/wp-content/uploads/prod/sites/5/2024/01/African-Landscape-at-Sunset-HERO-Image.jpg";
   const incrementShares = () => {
     setShareCount((prev) => prev + 1);
   };
@@ -57,7 +56,7 @@ export const EventsPage: React.FC = () => {
           description: suiObject.description,
           totalShares: suiObject.total_shares,
           availableShares: suiObject.rem_shares,
-          riskCoverage: suiObject.risk_coverage,
+          riskCoverage: String(mistToSui(suiObject.risk_coverage)),
           collateralBalance: suiObject.collateral.fields.balance,
         });
       } catch (error) {
@@ -134,6 +133,10 @@ export const EventsPage: React.FC = () => {
   const handleBuyNow = async () => {
     await buyShare(id, eventDetails?.collateralBalance);
   };
+
+  function mistToSui(mist: number): number {
+    return mist / 1_000_000_000; // 1 Mist = 1/1,000,000,000 SUI
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
