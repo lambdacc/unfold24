@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Calendar, ArrowRight, ArrowLeft } from "lucide-react";
 import { Header } from "@/components/Header";
+import { fetchSuiObject } from "@/apiService";
 
 export const EventsPage: React.FC = () => {
   const [shareCount, setShareCount] = useState(3);
@@ -24,6 +25,40 @@ export const EventsPage: React.FC = () => {
       setShareCount((prev) => prev - 1);
     }
   };
+  interface EventDetails {
+    name: string;
+    description: string;
+    totalShares: string;
+    availableShares: string;
+    riskCoverage: string;
+    collateralBalance: string;
+  }
+
+  // Add these state and effect hooks in EventsPage component
+  const { id } = useParams();
+  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null);
+
+  useEffect(() => {
+    const fetchEventDetails = async () => {
+      if (!id) return;
+
+      try {
+        const suiObject = await fetchSuiObject(id);
+        setEventDetails({
+          name: suiObject.name,
+          description: suiObject.description,
+          totalShares: suiObject.total_shares,
+          availableShares: suiObject.rem_shares,
+          riskCoverage: suiObject.risk_coverage,
+          collateralBalance: suiObject.collateral.fields.balance,
+        });
+      } catch (error) {
+        console.error("Error fetching event details:", error);
+      }
+    };
+
+    fetchEventDetails();
+  }, [id]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -48,7 +83,7 @@ export const EventsPage: React.FC = () => {
                     className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
                   />
                   <h1 className="text-3xl font-bold text-gray-800">
-                    ETH Denver 2024
+                    {eventDetails?.name || "Loading..."}
                   </h1>
                 </div>
 
@@ -58,24 +93,27 @@ export const EventsPage: React.FC = () => {
                     23-11-2024 9:56pm
                   </p>
                   <p className="text-gray-700 leading-relaxed">
-                    Join us at ETH Denver, the largest and longest-running ETH
-                    event in the world! This year's event will feature keynote
-                    speakers, workshops, and hackathons focused on blockchain
-                    innovation and web3 development.
+                    {eventDetails?.description || "Loading description..."}
                   </p>
 
                   <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200">
                     <div>
                       <p className="text-sm text-gray-500">Total Shares</p>
-                      <p className="text-2xl font-bold text-gray-800">1000</p>
+                      <p className="text-2xl font-bold text-gray-800">
+                        {eventDetails?.totalShares || "0"}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Tokens Minted</p>
-                      <p className="text-2xl font-bold text-gray-800">650</p>
+                      <p className="text-sm text-gray-500">Available Shares</p>
+                      <p className="text-2xl font-bold text-gray-800">
+                        {eventDetails?.availableShares || "0"}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Tokens Left</p>
-                      <p className="text-2xl font-bold text-gray-800">350</p>
+                      <p className="text-sm text-gray-500">Risk Coverage</p>
+                      <p className="text-2xl font-bold text-gray-800">
+                        {eventDetails?.riskCoverage || "0"} SUI
+                      </p>
                     </div>
                   </div>
                 </div>

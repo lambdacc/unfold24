@@ -21,7 +21,7 @@ interface RiskFormData {
   description: string;
   coverageAmount: string;
   collateralAmount: string;
-  profileImage: File | null;
+  profileImage: File | "";
 }
 
 export const CreateRiskPage = () => {
@@ -42,7 +42,13 @@ export const CreateRiskPage = () => {
   const currentAccount = useCurrentAccount();
   const counterPackageId = useNetworkVariable("counterPackageId");
 
-  const riskCreate = async (riskCoverage, collateralAmount) => {
+  const riskCreate = async (
+    name,
+    description,
+    ipfshash,
+    riskCoverage,
+    collateralAmount,
+  ) => {
     const totalShares = Math.ceil(riskCoverage / 100);
     console.log("new_risk fun called call");
 
@@ -56,6 +62,9 @@ export const CreateRiskPage = () => {
       tx.moveCall({
         target: `${counterPackageId}::contract::new_risk`,
         arguments: [
+          tx.pure.string(name),
+          tx.pure.string(description),
+          tx.pure.string(ipfshash.name),
           tx.pure.u64(riskCoverage),
           tx.pure.u64(totalShares),
           tx.object(coin),
@@ -95,7 +104,7 @@ export const CreateRiskPage = () => {
     description: "",
     coverageAmount: "",
     collateralAmount: "",
-    profileImage: null,
+    profileImage: "",
   });
 
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -118,7 +127,13 @@ export const CreateRiskPage = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    riskCreate(formData.coverageAmount, formData.collateralAmount);
+    riskCreate(
+      formData.title,
+      formData.description,
+      formData.profileImage,
+      formData.coverageAmount,
+      formData.collateralAmount,
+    );
     console.log("Form submitted with data:", formData);
   };
 
