@@ -13,6 +13,7 @@ import {
   useSuiClientQuery,
 } from "@mysten/dapp-kit";
 import { useNetworkVariable } from "../networkConfig";
+import { storeObjectChanges } from "@/lib/utils";
 
 interface RiskFormData {
   title: string;
@@ -24,11 +25,22 @@ interface RiskFormData {
 
 export const CreateRiskPage = () => {
   const suiClient = useSuiClient();
-  const { mutate: signAndExecute } = useSignAndExecuteTransaction();
+  const { mutate: signAndExecute } = useSignAndExecuteTransaction({
+    execute: async ({ bytes, signature }) =>
+      await suiClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature,
+        options: {
+          // Raw effects are required so the effects can be reported back to the wallet
+          showRawEffects: true,
+          // Select additional data to return
+          showObjectChanges: true,
+        },
+      }),
+  });
   const [waitingForTxn, setWaitingForTxn] = useState("");
   const currentAccount = useCurrentAccount();
   const counterPackageId = useNetworkVariable("counterPackageId");
-
 
   const riskCreate = async (riskCoverage, collateralAmount) => {
     // const riskCoverage: number = 1000;
@@ -48,8 +60,7 @@ export const CreateRiskPage = () => {
 
       // tx.setGasBudget(500000000);
       tx.moveCall({
-        target:
-          `${counterPackageId}::contract::new_risk`,
+        target: `${counterPackageId}::contract::new_risk`,
         arguments: [
           tx.pure.u64(riskCoverage),
           tx.pure.u64(totalShares),
@@ -70,6 +81,8 @@ export const CreateRiskPage = () => {
                 //await refetch();
                 setWaitingForTxn("");
                 console.log(`Transaction successful: ${tx.digest}`);
+                console.log("object changes", tx.objectChanges);
+                storeObjectChanges(tx?.objectChanges[1]?.objectId);
               });
           },
           onError: (error) => {

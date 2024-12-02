@@ -92,14 +92,14 @@ export default function Home() {
       <section className="relative z-10 py-24 my-12 text-center">
         <div className="container mx-auto px-4">
           <h1 className="text-6xl font-bold text-gray-900 mb-6">
-            DAO-Based Ecosystem
+            Decentralized
             <br />
-            Catalyst for Starknet
+            Risk-Hedging Platform
           </h1>
           <p className="text-xl text-gray-800 mb-12 max-w-3xl mx-auto">
-            Risk Harbor is a DAO Based Ecosystem Catalyst for projects built on
-            the StarkNet Network, aiming to be the future of decentralized
-            innovation.
+            Decentralized risk-hedging platform. Participants act as risk
+            takers, pooling funds to cover potential losses in
+            exchange for premiums.
           </p>
           <Button
             onClick={handleLaunchClick}
