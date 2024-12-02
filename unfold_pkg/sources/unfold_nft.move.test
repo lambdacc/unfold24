@@ -7,8 +7,8 @@ use std::string::String;
 use sui::package;
 use sui::display;
 
-/// The Hero - an outstanding collection of digital art.
-public struct Hero has key, store {
+/// The Shield - an outstanding collection of digital art.
+public struct Shield has key, store {
     id: UID,
     name: String,
     image_url: String,
@@ -28,14 +28,14 @@ fun init(otw: SHARE_NFT, ctx: &mut TxContext) {
     ];
 
     let values = vector[
-        // For `name` one can use the `Hero.name` property
+        // For `name` one can use the `Shield.name` property
         b"{name}".to_string(),
         // For `link` one can build a URL using an `id` property
         b"https://hedgesphereio/shield/{id}".to_string(),
         // For `image_url` use an IPFS template + `image_url` property.
         b"ipfs://{image_url}".to_string(),
-        // Description is static for all `Hero` objects.
-        b"A true Hero of the Sui ecosystem!".to_string(),
+        // Description is static for all `Shield` objects.
+        b"A true Shield of the Sui ecosystem!".to_string(),
         // Project URL is usually static
         b"https://hedgesphere.io".to_string(),
         // Creator field can be any
@@ -46,8 +46,8 @@ fun init(otw: SHARE_NFT, ctx: &mut TxContext) {
     // Claim the `Publisher` for the package!
     let publisher = package::claim(otw, ctx);
 
-    // Get a new `Display` object for the `Hero` type.
-    let mut display = display::new_with_fields<Hero>(
+    // Get a new `Display` object for the `Shield` type.
+    let mut display = display::new_with_fields<Shield>(
         &publisher, keys, values, ctx
     );
 
@@ -59,7 +59,7 @@ fun init(otw: SHARE_NFT, ctx: &mut TxContext) {
 
 /// Anyone can mint their `Share Token`!
 public fun mint(name: String, image_url: String, ctx: &mut TxContext) {
-    let hero = Hero {
+    let hero = Shield {
         id: object::new(ctx),
         name,
         image_url,

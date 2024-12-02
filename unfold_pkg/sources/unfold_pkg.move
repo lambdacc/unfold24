@@ -1,3 +1,5 @@
+/// testnet address : 0xc9590306dc2320b768e1c2c52e3e6a21d04979ab8e33da49bb174edf39589924
+
 module unfold_pkg::contract {
     use sui::object::{Self, UID};
     use sui::transfer;
@@ -6,6 +8,8 @@ module unfold_pkg::contract {
     use sui::table::{Self, Table};
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
+    use std::string::String;
+
 
     const PRECISION_FACTOR: u64 = 100000;
 
@@ -13,6 +17,9 @@ module unfold_pkg::contract {
     public struct State has key, store {
         id: UID,
         seller: address,
+        name: String,
+        description: String,
+        ipfs_hash: String,       
         risk_coverage: u64,
         collateral: Coin<SUI>,
         total_shares: u64,
@@ -23,6 +30,9 @@ module unfold_pkg::contract {
     }
 
     public fun new_risk(
+        name: String,
+        description: String,
+        ipfs_hash: String,       
         risk_coverage: u64,
         countShares: u64,
         collateral: Coin<SUI>,
@@ -32,6 +42,9 @@ module unfold_pkg::contract {
         let state = State {
             id: object::new(ctx),
             seller,
+            name,
+            description,
+            ipfs_hash,
             risk_coverage,
             collateral,
             total_shares: countShares, /// shares
@@ -64,7 +77,7 @@ module unfold_pkg::contract {
         // Convert payment coin to balance and add to buyers_balance
         balance::join(&mut state.buyers_balance, coin::into_balance(payment));
 
-        // Mint an NFT as proof of purchase (placeholder function for minting logic)
+        // Mint an NFT as proof of purchase (placeholder function for minting logic) uses unfold_nft package
         //mint_nft(buyer, ctx);
 
         // Additional logic for handling `payment` can be added here (e.g., transferring coins)
