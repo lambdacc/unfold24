@@ -42,6 +42,11 @@ export const CreateRiskPage = () => {
   const currentAccount = useCurrentAccount();
   const counterPackageId = useNetworkVariable("counterPackageId");
 
+  // sui to mist
+  function suiToMist(sui: number): number {
+    return sui * 1_000_000_000; // 1 SUI = 1,000,000,000 Mist
+  }
+
   const riskCreate = async (riskCoverage, collateralAmount) => {
     const totalShares = Math.ceil(riskCoverage / 100);
     console.log("new_risk fun called call");
@@ -50,13 +55,13 @@ export const CreateRiskPage = () => {
     console.log("new_risk tx", tx);
 
     try {
-      const coin = coinWithBalance({ balance: collateralAmount });
+      const coin = coinWithBalance({ balance: suiToMist(collateralAmount) });
       console.log("new_risk coin", coin);
 
       tx.moveCall({
         target: `${counterPackageId}::contract::new_risk`,
         arguments: [
-          tx.pure.u64(riskCoverage),
+          tx.pure.u64(suiToMist(riskCoverage)),
           tx.pure.u64(totalShares),
           tx.object(coin),
         ],
