@@ -5,6 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Minus, Plus, Calendar, ArrowRight, ArrowLeft } from "lucide-react";
 import { Header } from "@/components/Header";
 import { fetchSuiObject } from "@/apiService";
+import { coinWithBalance, Transaction } from "@mysten/sui/transactions";
+import { useNetworkVariable } from "@/networkConfig";
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+  useSuiClient,
+} from "@mysten/dapp-kit";
+import { storeObjectChanges } from "@/lib/utils";
 
 export const EventsPage: React.FC = () => {
   const [shareCount, setShareCount] = useState(3);
@@ -59,6 +67,73 @@ export const EventsPage: React.FC = () => {
 
     fetchEventDetails();
   }, [id]);
+
+  const [waitingForTxn, setWaitingForTxn] = useState("");
+  const counterPackageId = useNetworkVariable("counterPackageId");
+  const currentAccount = useCurrentAccount();
+  const suiClient = useSuiClient();
+  const { mutate: signAndExecute } = useSignAndExecuteTransaction({
+    execute: async ({ bytes, signature }) =>
+      await suiClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature,
+        options: {
+          showRawEffects: true,
+          showObjectChanges: true,
+        },
+      }),
+  });
+
+  const buyShare = async (state: any, collateralAmount) => {
+    console.log("buy_share fun called call");
+
+    const tx = new Transaction();
+    console.log("Buying share", tx);
+
+    try {
+      const coin = coinWithBalance({ balance: collateralAmount });
+      console.log("new_risk coin", coin);
+
+      tx.moveCall({
+        target: `${counterPackageId}::contract::buy_share`,
+        arguments: [
+          tx.object(state), // Mutable reference to the state
+          tx.object(coin), // Coin<SUI> object for payment
+          tx.pure.address(currentAccount?.address), // Address of the buyer
+          tx.pure.u64(1), // Address of the buyer
+        ],
+      });
+
+      tx.setSender(currentAccount?.address);
+      signAndExecute(
+        {
+          transaction: tx,
+        },
+        {
+          onSuccess: (tx) => {
+            suiClient
+              .waitForTransaction({ digest: tx.digest })
+              .then(async () => {
+                setWaitingForTxn("");
+                console.log(`Transaction successful: ${tx.digest}`);
+                console.log("object changes", tx.objectChanges);
+                // Redirect to /explore after successful transaction
+                navigate("/explore");
+              });
+          },
+          onError: (error) => {
+            console.error("Transaction failed:", error);
+          },
+        },
+      );
+    } catch (error) {
+      console.error("Error during transaction setup or execution:", error);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    await buyShare(id, eventDetails?.collateralBalance);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -192,7 +267,10 @@ export const EventsPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <Button className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+                    <Button
+                      onClick={handleBuyNow}
+                      className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-3 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+                    >
                       BUY NOW
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
