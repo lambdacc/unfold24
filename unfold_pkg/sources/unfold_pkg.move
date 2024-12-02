@@ -7,6 +7,8 @@ module unfold_pkg::contract {
     use sui::balance::{Self, Balance};
     use sui::sui::SUI;
 
+    const PRECISION_FACTOR: u64 = 100000;
+
 
     public struct State has key, store {
         id: UID,
@@ -16,16 +18,17 @@ module unfold_pkg::contract {
         total_shares: u64,
         rem_shares: u64,
         buyers_balance: Balance<SUI>,
-        buyers: Table<address, u64>
+        buyers: Table<address, u64>,
+        buyers_iter: vector<address>
     }
 
     public fun new_risk(
-        seller: address,
         risk_coverage: u64,
         countShares: u64,
         collateral: Coin<SUI>,
         ctx: &mut TxContext
     ) {
+        let seller = tx_context::sender(ctx);
         let state = State {
             id: object::new(ctx),
             seller,
@@ -34,7 +37,8 @@ module unfold_pkg::contract {
             total_shares: countShares, /// shares
             rem_shares: countShares, /// shares
             buyers_balance: balance::zero<SUI>(),
-            buyers: table::new(ctx)
+            buyers: table::new<address, u64>(ctx),
+            buyers_iter: vector<address>[]
         };
 
         transfer::public_share_object(state);
@@ -54,6 +58,7 @@ module unfold_pkg::contract {
             *current_shares = *current_shares + amount;
         } else {
             table::add(&mut state.buyers, buyer, amount);
+            state.buyers_iter.push_back(buyer);
         };
 
         // Convert payment coin to balance and add to buyers_balance
@@ -67,39 +72,64 @@ module unfold_pkg::contract {
 
 
     /// function to settle after the risk expire
-    public fun settle(state: &mut State, toggle: bool, ctx: &mut TxContext) {
-    }
-
-    public fun payoffToSeller(state: &mut State, toggle: bool, ctx: &mut TxContext) {
-        // If toggle is true, return the collateral and balance to the seller
-        if (toggle) {
-            let mut amount = state.collateral.value();
-            let mut coin_to_transfer = state.collateral.split(amount, ctx);
-            // Transfer collateral and buyer's balance to the
-            amount = state.buyers_balance.value();
-            let balance_to_transfer = state.buyers_balance.split(amount);
-            coin_to_transfer.join(coin::from_balance(balance_to_transfer, ctx));
-            transfer::public_transfer(coin_to_transfer, state.seller);
-            // Transfer buyers' balance to the seller
+    public fun settleContract(state: &mut State, riskEventOccurred: bool, ctx: &mut TxContext) {
+        // If risk event has occured, transfer the collateral and balance to the seller
+        // Otherwise send share of collateral and buyer balance to buyers, return any balance collater to the seller
+        if (riskEventOccurred) {
+            payToSeller(state, ctx)
         } else {
-            /*
-            // If risk event did not occur, distribute collateral and balance among the buyers
-            let total_buyers = Table::length(&state.buyers);  // Get number of buyers
-            let total_balance = state.buyers_balance; // The total balance to be distributed
-            // Add the collateral to the total_balance
-            balance::join(&mut total_balance, state.collateral);
-
-            // Loop through each buyer and distribute the funds based on their share
-            Table::for_each(&state.buyers, |buyer, shares| {
-                let share_percentage = u64::to_float(shares) / u64::to_float(total_buyers); // Calculate share percentage
-                let buyer_balance = share_percentage * total_balance;  // Calculate buyer's balance to receive
-
-                // Transfer corresponding collateral to the buyer (or distribute accordingly)
-                Coin::transfer(&mut state.collateral, buyer, ctx);
-            });
-            */
-        }
+            payToBuyers(state, ctx)
+        };
     }
+
+
+    fun payToSeller(state: &mut State, ctx: &mut TxContext) {
+        let mut amount = state.collateral.value();
+        let mut coin_to_transfer = state.collateral.split(amount, ctx);
+        //Risk seller gets compensated
+        amount = state.buyers_balance.value();
+        // Transfer buyers' balance to the seller
+        let balance_to_transfer = state.buyers_balance.split(amount);
+        coin_to_transfer.join(coin::from_balance(balance_to_transfer, ctx));
+        transfer::public_transfer(coin_to_transfer, state.seller);
+    }
+
+
+    fun payToBuyers(state: &mut State, ctx: &mut TxContext) {
+        // If toggle is true, return the collateral and balance to the seller
+        // Otherwise send share of collateral and buyer balance to buyers, return any balance collater to the seller
+        let mut amount = state.collateral.value();
+        let mut coin_to_transfer = state.collateral.split(amount, ctx);
+
+        //Risk buyers get payouts
+        //transfer::public_transfer(coin_to_transfer, state.seller);
+        // If risk event did not occur, distribute collateral and balance among the buyers
+        let total_buyers = table::length(&state.buyers);
+        let total_amount = coin::value(&coin_to_transfer);
+
+        // Loop through each buyer and distribute the funds based on their share
+        let given_shares = state.total_shares - state.rem_shares;
+        while (!state.buyers_iter.is_empty()) {
+            let buyer = vector::pop_back(&mut state.buyers_iter);
+            let shares = *table::borrow<address, u64>(&state.buyers, buyer);
+
+            // calculate share //NO float in Sui
+            // let price_per_share = state.collateral.value() / state.shares;
+            // let amount_to_get = shares * price_per_share;
+
+            let share_percentage: u64 = (shares * PRECISION_FACTOR) / given_shares;
+            let buyer_balance_val = (share_percentage * total_amount) / PRECISION_FACTOR;
+
+            let buyer_balance_to_transfer = coin::split(&mut coin_to_transfer, buyer_balance_val, ctx);
+
+            // Transfer corresponding collateral to the buyer (or distribute accordingly)
+            transfer::public_transfer(buyer_balance_to_transfer, buyer);
+        };
+        transfer::public_transfer(coin_to_transfer, state.seller);
+    }
+
+
+    //TODO func to fetch state by ID
 }
 
 
