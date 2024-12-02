@@ -1,6 +1,6 @@
 
-
-# Decentralized Risk Sharing and Insurance Smart Contract
+# _HedgeSphere_
+## Decentralized Risk Sharing and Insurance Smart Contract
 
 ## Use Case
 This smart contract facilitates risk-sharing between a **Risk Seller** and **Risk Takers** using a decentralized insurance model. The contract ensures fair distribution of funds based on a predefined risk event condition.
