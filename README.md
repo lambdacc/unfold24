@@ -49,6 +49,11 @@ Any unsubscribed shares' portion of the collateral returns to the Risk Seller
     * Risk Taker A (35 shares) → Receives proportional share
     * Risk Taker B (45 shares) → Receives proportional share
 
+
+### Diagram
+
+![diagram.png](docs/diagram.png)
+
 ## Key Features
 - **Transparency:** Blockchain-based records create immutable, auditable risk-sharing transactions.
 
