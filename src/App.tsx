@@ -1,38 +1,25 @@
-import { ConnectButton } from "@mysten/dapp-kit";
-import { Box, Container, Flex, Heading } from "@radix-ui/themes";
-import { WalletStatus } from "./WalletStatus";
+// src/App.tsx
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ExplorePage } from "./pages/Explore";
+import { CreateRiskPage } from "./pages/CreateRisk";
+import { EventsPage } from "./pages/Events";
+import Home from "./pages/Home";
 
 function App() {
   return (
-    <>
-      <Flex
-        position="sticky"
-        px="4"
-        py="2"
-        justify="between"
-        style={{
-          borderBottom: "1px solid var(--gray-a2)",
-        }}
-      >
-        <Box>
-          <Heading>dApp Starter Template</Heading>
-        </Box>
-
-        <Box>
-          <ConnectButton />
-        </Box>
-      </Flex>
-      <Container>
-        <Container
-          mt="5"
-          pt="2"
-          px="4"
-          style={{ background: "var(--gray-a2)", minHeight: 500 }}
-        >
-          <WalletStatus />
-        </Container>
-      </Container>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/events/:id" element={<EventsPage />} />
+        <Route path="/createRisk" element={<CreateRiskPage />} />
+      </Routes>
+    </Router>
   );
 }
 
