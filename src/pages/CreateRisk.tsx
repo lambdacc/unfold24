@@ -56,7 +56,7 @@ export const CreateRiskPage = () => {
     console.log("new_risk tx", tx);
 
     try {
-      const coin = coinWithBalance({ balance: collateralAmount });
+      const coin = coinWithBalance({ balance: suiToMist(collateralAmount) });
       console.log("new_risk coin", coin);
 
       tx.moveCall({
@@ -65,7 +65,7 @@ export const CreateRiskPage = () => {
           tx.pure.string(name),
           tx.pure.string(description),
           tx.pure.string(ipfshash.name),
-          tx.pure.u64(riskCoverage),
+          tx.pure.u64(suiToMist(riskCoverage)),
           tx.pure.u64(totalShares),
           tx.object(coin),
         ],
@@ -124,6 +124,10 @@ export const CreateRiskPage = () => {
       setImagePreview(imageUrl);
     }
   };
+
+  function suiToMist(sui: number): number {
+    return sui * 1_000_000_000; // 1 SUI = 1,000,000,000 Mist
+  }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
