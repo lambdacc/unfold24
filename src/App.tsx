@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { ExplorePage } from "./pages/Explore";
 import { CreateRiskPage } from "./pages/CreateRisk";
-import EventsPage from "./pages/Events";
+import { EventsPage } from "./pages/Events";
 import Home from "./pages/Home";
 
 function App() {
