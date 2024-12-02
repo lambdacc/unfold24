@@ -56,6 +56,62 @@ const recentActivities: Activity[] = [
     amount: 5,
     timeAgo: "4hr ago",
   },
+  {
+    user: "jane farmer",
+    action: "bought insurance for",
+    target: "wheat field",
+    amount: 10,
+    timeAgo: "5hr ago",
+  },
+  {
+    user: "tom agritech",
+    action: "bought insurance for",
+    target: "cattle farm",
+    amount: 20,
+    timeAgo: "6hr ago",
+  },
+  {
+    user: "green grower",
+    action: "bought insurance for",
+    target: "corn crops",
+    amount: 8,
+    timeAgo: "7hr ago",
+  },
+  {
+    user: "mary cooper",
+    action: "bought insurance for",
+    target: "apple orchard",
+    amount: 15,
+    timeAgo: "8hr ago",
+  },
+  {
+    user: "happy harvesters",
+    action: "bought insurance for",
+    target: "rice fields",
+    amount: 25,
+    timeAgo: "9hr ago",
+  },
+  {
+    user: "blue barn",
+    action: "bought insurance for",
+    target: "dairy cows",
+    amount: 12,
+    timeAgo: "10hr ago",
+  },
+  {
+    user: "agri-tech pros",
+    action: "bought insurance for",
+    target: "sunflower farm",
+    amount: 7,
+    timeAgo: "11hr ago",
+  },
+  {
+    user: "rural protectors",
+    action: "bought insurance for",
+    target: "potato crops",
+    amount: 9,
+    timeAgo: "12hr ago",
+  },
 ];
 
 export const ExplorePage = () => {
@@ -214,16 +270,42 @@ export const ExplorePage = () => {
                     See All
                   </Button>
                 </div>
-                <div className="space-y-4">
-                  {recentActivities.map((activity, index) => (
-                    <div key={index} className="text-sm text-gray-600">
-                      <p>
-                        {activity.user} {activity.action} {activity.target} for{" "}
-                        {activity.amount} shares · {activity.timeAgo}
-                      </p>
-                    </div>
-                  ))}
+
+                <div className="overflow-hidden h-40 relative">
+                  <div className="animate-marquee space-y-4">
+                    {recentActivities.map((activity, index) => (
+                      <div key={index} className="text-sm text-gray-600">
+                        <p>
+                          {activity.user} {activity.action} {activity.target}{" "}
+                          for{" "}
+                          <span className="font-semibold">
+                            {activity.amount}{" "}
+                          </span>
+                          shares ·{" "}
+                          <p className="font-semibold"> {activity.timeAgo}</p>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+
+                <style jsx>{`
+                  .animate-marquee {
+                    display: flex;
+                    flex-direction: column;
+                    position: relative;
+                    animation: marquee 15s linear infinite;
+                  }
+
+                  @keyframes marquee {
+                    0% {
+                      transform: translateY(10%);
+                    }
+                    100% {
+                      transform: translateY(-100%);
+                    }
+                  }
+                `}</style>
               </Card>
             </div>
           </div>
